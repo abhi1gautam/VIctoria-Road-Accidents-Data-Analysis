@@ -6,19 +6,21 @@ output: html_document
 ---
 ## Background
 _Rationale and stakeholders_
+VicRoads is the sate government body that manages and regulates the main road network within the Victorian state, with a goal to create a smarter and safer road network across the state. Along with delivering road safety initiatives, VicRoads provides registration and licensing services for all motor vehicles.
 
-VicRoads is the Victorian government body that 'owns, manages and regulates the arterial road network, delivers road safety initiatives, and provides registration and licensing services'.
-In conjunction with 
+One of their strategies to manage the safety of road users is their "Towards Zero" campaign which aims to reduce road fatalities to below 200 per annum by 2020.
+Over the past 5 years...
 
-One of their strategies to manage the safety of road users is their "Towards Zero" campaign....
-The campaign uses....... to tackle road safety issues
+The campaign currently uses....... to tackle road safety issues.
 
-
+Another factor to consider towards achieving this goal
 
 
 ## Proposed Research Questions
-
-
+We are proposing the following research questions to further investigate factors contributing towards road crashes.
+1. How do different weather conditions 
+2. 
+3. 
 
 
 ## Data Sets
