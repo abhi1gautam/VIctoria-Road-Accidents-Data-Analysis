@@ -5,3 +5,8 @@ How to use GIT
 
 TEST 123
 
+<<<<<<< HEAD
+=======
+TEST ABHI
+>>>>>>> 3c3c3b4b3901eb7a527dd80c95437fc4e25e8869
+Hi
