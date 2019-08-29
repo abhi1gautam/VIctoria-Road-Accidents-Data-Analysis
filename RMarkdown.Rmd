@@ -9,22 +9,26 @@ _Rationale and stakeholders_
 VicRoads is the sate government body that manages and regulates the main road network within the Victorian state, with a goal to create a smarter and safer road network across the state. Along with delivering road safety initiatives, VicRoads provides registration and licensing services for all motor vehicles.
 
 One of their strategies to manage the safety of road users is their "Towards Zero" campaign which aims to reduce road fatalities to below 200 per annum by 2020.
-Over the past 5 years...
+
+
+![](Graphics/VicRoads_Crash_Stats.PNG)
 
 The campaign currently uses....... to tackle road safety issues.
 
-Another factor to consider towards achieving this goal
+Over the past 5 years, fatalities have decreased towards the target of 200, but a large number of motor vehicle accidents still occur. Of the non-fatal accidents in 2018, XX% of persons involved were seriously injured, requiring admission into hospital.
+
+
+Other factors to consider in achieving a fatality rate towards zero, and a reduction of motor vehicle accidents overall, are external weather factors. Even though VicRoads is unable to control external weather factors, precautionary measures and targeted, informative campaigns backed by statistics may contribute towards a reduction in motor vehicle accidents.
 
 
 ## Proposed Research Questions
-We are proposing the following research questions to further investigate factors contributing towards road crashes.
-1. How do different weather conditions 
-2. 
-3. 
-
+To further investigate the effect of external factors on road crashes, the following research questions are being proposed:
+1. How, and to what extent, do different weather conditions affect road accidents?
+2. What is the probability of a road accident occuring during wet weather, given the age of the driver?
+3. What changes, if any, to current road policies and campaigns are recommended?
 
 ## Data Sets
-_Range of datasets examined, chosen for the analysi. How datasets were merged. Is granularity of data sufficient to answer research questions_
+_Range of datasets examined, chosen for the analysis. How datasets were merged. Is granularity of data sufficient to answer research questions_
 
 
 ## Regression Modelling
@@ -32,8 +36,12 @@ _Regression modelling techniques to be employed_
 
 
 ## Issues
-_issues anticipated may arise_
-
+Throughout the project, the following have been identified as potential issues:
+- accurately assigning weather conditions to each motor vehicle accident
+- merging and joining data sets
+- working with low quality data sets
+- compensating for missing explanatory variables
+- 
 
 
 ## Appendix
