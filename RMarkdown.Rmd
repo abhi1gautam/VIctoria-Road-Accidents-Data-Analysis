@@ -17,8 +17,10 @@ The campaign currently uses....... to tackle road safety issues.
 
 Over the past 5 years, fatalities have decreased towards the target of 200, but a large number of motor vehicle accidents still occur. Of the non-fatal accidents in 2018, XX% of persons involved were seriously injured, requiring admission into hospital.
 
+(can we make shit up???)
+As part of their next campaign to tackle the frequency of road accidents, VicRoads are investigating the impact of external factors in contributing towards the number of accidents. 
 
-Other factors to consider in achieving a fatality rate towards zero, and a reduction of motor vehicle accidents overall, are external weather factors. Even though VicRoads is unable to control external weather factors, precautionary measures and targeted, informative campaigns backed by statistics may contribute towards a reduction in motor vehicle accidents.
+Even though VicRoads is unable to control external weather factors, precautionary measures and targeted, informative campaigns backed by statistics may contribute towards a reduction in motor vehicle accidents.
 
 
 ## Proposed Research Questions
