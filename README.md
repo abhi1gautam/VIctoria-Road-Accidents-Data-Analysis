@@ -9,8 +9,6 @@ TEST ABHI
 
 Hi adding text here by abh
 
-<<<<<<< HEAD
-
 Testing of resolved conflicts- added by abhi
 =======
 TESTING CONFLICT 123
@@ -19,3 +17,4 @@ Testing of resolved conflicts- added by abh
 Yooohh
 
 567
+123
