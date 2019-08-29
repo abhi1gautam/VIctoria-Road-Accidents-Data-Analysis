@@ -7,7 +7,9 @@ output: html_document
 ## Background
 _Rationale and stakeholders_
 
-Vic Roads is the governing body....
+VicRoads is the Victorian government body that 'owns, manages and regulates the arterial road network, delivers road safety initiatives, and provides registration and licensing services'.
+In conjunction with 
+
 One of their strategies to manage the safety of road users is their "Towards Zero" campaign....
 The campaign uses....... to tackle road safety issues
 
@@ -15,6 +17,7 @@ The campaign uses....... to tackle road safety issues
 
 
 ## Proposed Research Questions
+
 
 
 
