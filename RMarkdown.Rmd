@@ -1,11 +1,16 @@
 ---
-title: "Proposal: "
+title: "Proposal: Victorian Motor Vehicle Accidents"
 author: "Bruno Quevedo, Priscilla Soenario"
 date: "01/09/2019"
 output: html_document
 ---
 ## Background
 _Rationale and stakeholders_
+
+Vic Roads is the governing body....
+One of their strategies to manage the safety of road users is their "Towards Zero" campaign....
+The campaign uses....... to tackle road safety issues
+
 
 
 
