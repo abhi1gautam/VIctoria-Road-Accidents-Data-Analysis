@@ -1,6 +1,6 @@
 ---
 title: "Proposal: Victorian Motor Vehicle Accidents"
-author: "Bruno Quevedo, Priscilla Soenario"
+author: "Bruno Quevedo, Priscilla Soenario, Priyanka Srinivasa"
 date: "01/09/2019"
 output: html_document
 ---
@@ -9,6 +9,8 @@ VicRoads is the sate government body that manages and regulates the main road ne
 
 In 2016, VicRoads implemented their "Towards Zero" strategy, initially aimed at reducing annual road fatalities to below 200 by 2020.    
 As part of this action plan, VicRoads aims to reduce serious injuries by 15% over the 5 year period between 2016-2020.
+
+We are trying to investigate the link between extreme weather conditions and road accidents in order to improve road safety monitoring. We are illustrating the use of weather variables for analysing changes in the number of road injury accidents. Weather conditions are considered to be a factor that affects the number of road accidents and casualties significantly, with different effects according to the type of road (motorways, rural roads or urban roads). Capturing and measuring the climatic factor is not straightforward. It raises a number of issues, most importantly, how can we determine which meteorological phenomena significantly influence the road risk level, which variables are to be chosen for measuring them and also on which time scale should the weather be measured to be significant on a monthly time scale.The number of injury accidents that are recorded during inclement weather has led rain to be considered as the major meteorological explanatory factor for road accident risk (Brodsky and Hakkert, 1988). Fair weather favours mobility, while cold spells reduce it, and it seems natural to consider temperature as an appropriate variable for representing the regular changes in mobility during the year, as well as the atypical changes in mobility that occur in the event of unusually hot or cold weather. Extreme weather conditions or other natural phenomena can make large parts of the road network impassable.
 
 
 ![_VicRoads 2019_](Graphics/VicRoads_People_Crash_Stats.PNG)
