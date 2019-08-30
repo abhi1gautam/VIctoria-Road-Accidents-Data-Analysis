@@ -7,47 +7,38 @@ output: html_document
 ![](Graphics/TowardsZero.jpg)
 
 ## Background
-Towards zero is the 2016-2020 road safety strategy
+Towards zero is the 2016-2020 road safety strategy for the state of Victoria. The strategy is a collaboration between multiple Victorian government bodies including the Transport Accident Commission, VicRoads, Victorian Police, the Department of Justice and Regulation and the Department of Health and Human Services to achieve zero road deaths in Victoria.
 
-VicRoads is the sate government body that manages and regulates the main road network within the Victorian state, with a goal to create a smarter and safer road network across the state. Along with delivering road safety initiatives, VicRoads provides registration and licensing services for all motor vehicles.
+The short term objective of the collaboration is to reduce annual road fatalities to below 200 by 2020 and reduce serious injuries, which require hospital admission, by 15% over the 5 year period between 2016-2020.
 
-In 2016, VicRoads implemented their "Towards Zero" strategy, initially aimed at reducing annual road fatalities to below 200 by 2020.    
-As part of this action plan, VicRoads aims to reduce serious injuries by 15% over the 5 year period between 2016-2020. A serious injury is defined as an injury requiring admission into hospital.
+The Towards Zero campaign in centered upon the mantra of safer roads, safer speeds, safer vehicles and safer road users through improving infrastructure, focused education campaigns, increased monitoring and implementing innovations.
 
 ![_VicRoads 2019_](Graphics/VicRoads_People_Crash_Stats.PNG)
 
-Since the implementation of the "Towards Zero" strategy, progress has been made across all categories in reducing
+Since the implementation of the Towards Zero strategy, progress has been made to reduce both road fatalities and serious injuries. An additional factor to consider as part of road safety are the external weather conditions road users are subject to.
 
-The "Towards Zero" campaign has focussed their investments on a few key areas, notably the creation of a physically safer en, a Road Safety Education Complex, increasing
-
-The campaign currently focuses on physically creating a safer environment, education and increased monitoring to tackle road safety issues.
+How do
 
 
-### Weather Conditions as a
+### Weather Conditions as a Factor of Road Safety
 _ARTICLES CONSDIERING IMPACT OF EXTERNAL FACTORS ON ACCIDENTS_
-We are trying to investigate the link between extreme weather conditions and road accidents in order to improve road safety monitoring. We are illustrating the use of weather variables for analysing changes in the number of road injury accidents. 
+The number of injury accidents that are recorded during inclement weather has led rain to be considered as the major meteorological explanatory factor for road accident risk (Brodsky & Hakkert 1988).
+
 
 Weather conditions are considered to be a factor that affects the number of road accidents and casualties significantly, with different effects according to the type of road (motorways, rural roads or urban roads). 
-Capturing and measuring the climatic factor is not straightforward. 
-
-It raises a number of issues, most importantly, how can we determine which meteorological phenomena significantly influence the road risk level, which variables are to be chosen for measuring them and also on which time scale should the weather be measured to be significant on a monthly time scale.
-
-The number of injury accidents that are recorded during inclement weather has led rain to be considered as the major meteorological explanatory factor for road accident risk (Brodsky and Hakkert, 1988). 
 
 Fair weather favours mobility, while cold spells reduce it, and it seems natural to consider temperature as an appropriate variable for representing the regular changes in mobility during the year, as well as the atypical changes in mobility that occur in the event of unusually hot or cold weather. 
 
 Extreme weather conditions or other natural phenomena can make large parts of the road network impassable.
 
-Even though VicRoads is unable to control external weather factors, precautionary measures and targeted educational campaigns backed by statistics may contribute towards a reduction in motor vehicle accidents.
 
 _ARTICLES SUPPORTING EDUCATION STATS_
 
-
 ## Proposed Research Questions
-To further investigate the effect of external factors on road crashes, the following research questions are being proposed:   
+To further investigate the effect of external factors on Victorian road accidents, the following research questions are being proposed:   
 1. How, and to what extent, do different weather conditions affect road accidents?   
 2. What is the probability of a road accident occuring during wet weather, given the age of the driver?   
-3. What changes, if any, to current road policies and campaigns are recommended?   
+3. What changes, if any, to the Towards Zero campaign are recommended?   
 
 ## Data Sets
 _Range of datasets examined, chosen for the analysis. How datasets were merged. Is granularity of data sufficient to answer research questions_
@@ -58,15 +49,72 @@ _Regression modelling techniques to be employed_
 
 
 ## Issues
-Throughout the project, the following have been identified as potential issues:
-- accurately assigning weather conditions to each motor vehicle accident
+Throughout the project, the following have been identified as potential issues to consider and address:
+- accurately assigning weather conditions to each road accident
 - merging and joining data sets
 - working with low quality data sets
 - compensating for missing explanatory variables
-- 
+- complexity of capturing and measuring weather variables
 
+It raises a number of issues, most importantly, how can we determine which meteorological phenomena significantly influence the road risk level, which variables are to be chosen for measuring them and also on which time scale should the weather be measured to be significant on a monthly time scale.
 
 ## Appendix
 _code samples demonstrating the data acquisition and merger processes that you have used to date_
+### Data Acquisition
 
-## Reference
+
+### Data Merging
+
+
+We have planned to determine the rainfall in the place of the accident by taking data from the closest weather station. In order to do that, we will need to cross join the weather station data and accident's data and then find the distance between these two. The cross join returns m*n number of results. Then we will take only those readings contain minimum value of distance calculated.
+
+#### Installation of packages
+
+``` {r install_load_libraries, results='hide', message=FALSE, warning=FALSE}
+install.packages("tidyverse",repos = "http://cran.us.r-project.org")
+install.packages("geosphere",repos = "http://cran.us.r-project.org")
+
+library(tidyverse)
+library(geosphere)
+```
+
+##Loading data into variables
+Creating a dummy weather data
+``` {r create_weather_data, results='hide', message=FALSE, warning=FALSE}
+weather <- data.frame(
+			 station_number= c(1121),
+			 rainfall = c(10),
+	     station_longitude= c(145),
+	     station_latitude = c(-37)
+	)
+```
+
+Loading accident data (only 1000 are loaded for the sake of example)
+``` {r load_crash_data, results='hide', message=FALSE, warning=FALSE}
+crashes <- read.csv("Crashes_Last_Five_Years.csv",nrows=1000)
+```
+
+##Perform a cross join
+So now we will perform a cross join of the crash data and weather data
+
+``` {r cross_join_data, results='hide', message=FALSE, warning=FALSE}
+weather_crashes <- merge(weather, crashes %>% select(ACCIDENT_NO, ACCIDENT_DATE, LONGITUDE, LATITUDE), all= TRUE)
+```
+
+##Calculate the distance
+Finally, we can get the distance by using the crossed data table.
+
+``` {r distance_calculation, results='hide', message=FALSE, warning=FALSE}
+weather_crashes_dist <- 
+	weather_crashes %>% mutate(dist_station_crash = distHaversine(cbind(station_longitude, station_latitude), cbind(LONGITUDE, LATITUDE)))
+```
+
+##Our final data
+We will obtain:
+
+``` {r display_calculation }
+head(weather_crashes_dist, 10)
+```
+
+
+## References
