@@ -8,17 +8,19 @@ output: html_document
 _Rationale and stakeholders_
 VicRoads is the sate government body that manages and regulates the main road network within the Victorian state, with a goal to create a smarter and safer road network across the state. Along with delivering road safety initiatives, VicRoads provides registration and licensing services for all motor vehicles.
 
-One of their strategies to manage the safety of road users is their "Towards Zero" campaign which aims to reduce road fatalities to below 200 per annum by 2020.
-
-
-![](Graphics/VicRoads_Crash_Stats.PNG)
+In 2016, VicRoads implemented their "Towards Zero" strategy, initially aimed at reducing annual road fatalities to below 200 by 2020.
+As part of this action plan, VicRoads aims to reduce serious injuries by 15% over the 5 year period between 2016-2020.
 
 The campaign currently uses....... to tackle road safety issues.
 
-Over the past 5 years, fatalities have decreased towards the target of 200, but a large number of motor vehicle accidents still occur. Of the non-fatal accidents in 2018, XX% of persons involved were seriously injured, requiring admission into hospital.
+![](Graphics/VicRoads_People_Crash_Stats.PNG)
 
-(can we make shit up???)
-As part of their next campaign to tackle the frequency of road accidents, VicRoads are investigating the impact of external factors in contributing towards the number of accidents. 
+
+
+Over the past 5 years, fatalities have decreased towards the target of 200, but a large number of motor vehicle accidents still occur.Although ViCRoads have achieved a 26% reduction in serious injuries, well over the intended 15% reduction, 
+Of the non-fatal accidents in 2018, XX% of persons involved were seriously injured, requiring admission into hospital.
+
+To assist in reducing the percentage of serious injuries ViCRoads has invested in key areas, including focussed training and information on higher
 
 Even though VicRoads is unable to control external weather factors, precautionary measures and targeted, informative campaigns backed by statistics may contribute towards a reduction in motor vehicle accidents.
 
