@@ -5,21 +5,18 @@ How to use GIT
 
 TEST 123
 
-
 TEST ABHI
 
 Hi adding text here by abh
 
+Testing of resolved conflicts- added by abhi
+=======
 TESTING CONFLICT 123
 Testing of resolved conflicts- added by abh
 
-Testing of resolved conflicts- added by abhi
+Yooohh
 
+567
+123
 
-
-Hi adding text
-
-
-gfs
-
-
+ganesh
