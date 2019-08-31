@@ -61,27 +61,18 @@ It raises a number of issues, most importantly, how can we determine which meteo
 
 ## Appendix
 _code samples demonstrating the data acquisition and merger processes that you have used to date_
-### Data Acquisition
-
-
-### Data Merging
-
-*Reading Libraries*
+**Reading Libraries**
 ``` {r, results='hide', message=FALSE, warning=FALSE}
 library(tidyverse)
 library(esquisse)
 library(geosphere)
 ```
 
-##Loading data into variables
-Creating a dummy weather data
-``` {r create_weather_data, results='hide', message=FALSE, warning=FALSE}
-weather <- data.frame(
-			 station_number= c(1121),
-			 rainfall = c(10),
-	     station_longitude= c(145),
-	     station_latitude = c(-37)
-	)
+**Reading Data**
+``` {r, results='hide', message=FALSE, warning=FALSE}
+accident <- read.csv("Datasets/Road Crashes/ACCIDENT.csv")
+climate86018 <- read.csv("Datasets/Climate/86018.csv")
+accident_node <-  read.csv("Datasets/Road Crashes/NODE.CSV")
 ```
 
 Loading accident data (only 1000 are loaded for the sake of example)
