@@ -63,8 +63,7 @@ It raises a number of issues, most importantly, how can we determine which meteo
 #### Reading Libraries
 ``` {r, results='hide', message=FALSE, warning=FALSE}
 library(tidyverse)
-library(esquisse)
-library(geosphere)
+library(geosphere) #to calculate geographical distances
 ```
 
 #### Reading Data
@@ -99,7 +98,10 @@ climate86018 <- climate86018 %>% rename (DATE = YYYY.MM.DD)
 #Creating mergedFiles object, which contains accident, accident location and climate data
 mergedFiles <- merge(accident,accident_node,by="ACCIDENT_NO")
 mergedFiles <- merge(mergedFiles, climate86018,by="DATE")
+```
 
+#### Calculating Distance
+```{r}
 #Adding dist_station_crash column with distance between accident location and climate observatory
 mergedFiles <- mergedFiles %>% 
 	mutate(dist_station_crash = distHaversine(cbind(station_long, station_lat), cbind(Long, Lat)))
