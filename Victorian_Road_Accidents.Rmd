@@ -15,21 +15,20 @@ The Towards Zero campaign in centered upon the mantra of safer roads, safer spee
 
 ![_VicRoads 2019_](Graphics/VicRoads_People_Crash_Stats.PNG)
 
-Since the implementation of the Towards Zero strategy, progress has been made to reduce both road fatalities and serious injuries. An additional factor to consider as part of road safety are the external weather conditions road users are subject to.
+Since the implementation of the Towards Zero strategy, progress has been made to reduce both road fatalities and serious injuries.
+
+### Towards Zero Education Campaign
+The 
+
+
+An additional factor to consider as part of road safety are the external weather conditions road users are subject to.
 
 How do
 
 
 ### Weather Conditions as a Factor of Road Safety
 _ARTICLES CONSDIERING IMPACT OF EXTERNAL FACTORS ON ACCIDENTS_
-The number of injury accidents that are recorded during inclement weather has led rain to be considered as the major meteorological explanatory factor for road accident risk (Brodsky & Hakkert 1988).
-
-
-Weather conditions are considered to be a factor that affects the number of road accidents and casualties significantly, with different effects according to the type of road (motorways, rural roads or urban roads). 
-
-Fair weather favours mobility, while cold spells reduce it, and it seems natural to consider temperature as an appropriate variable for representing the regular changes in mobility during the year, as well as the atypical changes in mobility that occur in the event of unusually hot or cold weather. 
-
-Extreme weather conditions or other natural phenomena can make large parts of the road network impassable.
+We are trying to investigate the link between extreme weather conditions and road accidents in order to improve road safety monitoring. We are illustrating the use of weather variables for analysing changes in the number of road injury accidents. Weather conditions are considered to be a factor that affects the number of road accidents and casualties significantly, with different effects according to the type of road (motorways, rural roads or urban roads). Capturing and measuring the climatic factor is not straightforward. It raises a number of issues, most importantly, how can we determine which meteorological phenomena significantly influence the road risk level, which variables are to be chosen for measuring them and also on which time scale should the weather be measured to be significant on a monthly time scale.The number of injury accidents that are recorded during inclement weather has led rain to be considered as the major meteorological explanatory factor for road accident risk (Brodsky and Hakkert, 1988). Fair weather favours mobility, while cold spells reduce it, and it seems natural to consider temperature as an appropriate variable for representing the regular changes in mobility during the year, as well as the atypical changes in mobility that occur in the event of unusually hot or cold weather. Extreme weather conditions or other natural phenomena can make large parts of the road network impassable.
 
 
 ## Proposed Research Questions
@@ -64,6 +63,8 @@ _code samples demonstrating the data acquisition and merger processes that you h
 ### Data Merging
 
 
+
+
 We have planned to determine the rainfall in the place of the accident by taking data from the closest weather station. In order to do that, we will need to cross join the weather station data and accident's data and then find the distance between these two. The cross join returns m*n number of results. Then we will take only those readings contain minimum value of distance calculated.
 
 #### Installation of packages
@@ -73,6 +74,7 @@ install.packages("tidyverse",repos = "http://cran.us.r-project.org")
 install.packages("geosphere",repos = "http://cran.us.r-project.org")
 
 library(tidyverse)
+library(esquisse)
 library(geosphere)
 ```
 
