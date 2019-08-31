@@ -43,7 +43,7 @@ _Range of datasets examined, chosen for the analysis. How datasets were merged. 
 ### Data Merging
 The research questions require us to determine the weather conditions at the location of the accident by taking data from the closest weather station, gence a merge between the weather station and road accident data sets.
 
-To determine which weather station is most appropriate for the site of a road accident, the distance between the two is to be quantified. The cross join returns m*n number of results. Then we will take only those readings contain minimum value of distance calculated.
+To determine which weather station is most appropriate for the site of a road accident, the distance between the two is to be quantified.  of results. Then we will take only those readings contain minimum value of distance calculated.
 
 ## Regression Modelling
 _Regression modelling techniques to be employed_
@@ -51,11 +51,13 @@ _Regression modelling techniques to be employed_
 
 ## Issues
 Throughout the project, the following have been identified as potential issues to consider and address:
-- accurately assigning weather conditions to each road accident
-- merging and joining data sets
-- working with low quality data sets
-- compensating for missing explanatory variables
-- complexity of capturing and measuring weather variables
+* accurately assigning weather conditions to each road accident
+	+ 
+* merging and joining data sets
+	+
+* working with low quality data sets
+* compensating for missing explanatory variables
+* complexity of capturing and measuring weather variables
 
 It raises a number of issues, most importantly, how can we determine which meteorological phenomena significantly influence the road risk level, which variables are to be chosen for measuring them and also on which time scale should the weather be measured to be significant on a monthly time scale.
 
@@ -77,7 +79,6 @@ accident_node <-  read.csv("Datasets/Road Crashes/NODE.CSV")
 
 ```{r}
 glimpse(accident)
-
 glimpse(climate86018)
 
 #Adding station latitude and longitude to all rows (to calculate distance between the accident and climate station)
