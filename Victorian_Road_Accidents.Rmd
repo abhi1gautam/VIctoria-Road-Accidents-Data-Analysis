@@ -60,47 +60,51 @@ Throughout the project, the following have been identified as potential issues t
 It raises a number of issues, most importantly, how can we determine which meteorological phenomena significantly influence the road risk level, which variables are to be chosen for measuring them and also on which time scale should the weather be measured to be significant on a monthly time scale.
 
 ## Appendix
-_code samples demonstrating the data acquisition and merger processes that you have used to date_
-**Reading Libraries**
+#### Reading Libraries
 ``` {r, results='hide', message=FALSE, warning=FALSE}
 library(tidyverse)
 library(esquisse)
 library(geosphere)
 ```
 
-**Reading Data**
+#### Reading Data
 ``` {r, results='hide', message=FALSE, warning=FALSE}
 accident <- read.csv("Datasets/Road Crashes/ACCIDENT.csv")
 climate86018 <- read.csv("Datasets/Climate/86018.csv")
 accident_node <-  read.csv("Datasets/Road Crashes/NODE.CSV")
 ```
 
-Loading accident data (only 1000 are loaded for the sake of example)
-``` {r load_crash_data, results='hide', message=FALSE, warning=FALSE}
-crashes <- read.csv("Crashes_Last_Five_Years.csv",nrows=1000)
+#### Data Transformation
+
+```{r}
+glimpse(accident)
+
+glimpse(climate86018)
+
+#Adding station latitude and longitude to all rows (to calculate distance between the accident and climate station)
+climate86018$station_lat <- rep(-37.8795,nrow(climate86018))
+climate86018$station_long <- rep(145.0368,nrow(climate86018))
+
+#Converting fct to date
+accident$ACCIDENTDATE <- as.Date(accident$ACCIDENTDATE, "%d/%m/%Y")
+climate86018$YYYY.MM.DD  <- as.Date (climate86018$YYYY.MM.DD, "%Y-%m-%d")
+
+#Rename date columns (to be used as primary key between accidents and climate data)
+accident <- accident %>% rename (DATE = ACCIDENTDATE)
+climate86018 <- climate86018 %>% rename (DATE = YYYY.MM.DD)
 ```
 
-##Perform a cross join
-So now we will perform a cross join of the crash data and weather data
+#### Merging Data
+```{r}
+#Creating mergedFiles object, which contains accident, accident location and climate data
+mergedFiles <- merge(accident,accident_node,by="ACCIDENT_NO")
+mergedFiles <- merge(mergedFiles, climate86018,by="DATE")
 
-``` {r cross_join_data, results='hide', message=FALSE, warning=FALSE}
-weather_crashes <- merge(weather, crashes %>% select(ACCIDENT_NO, ACCIDENT_DATE, LONGITUDE, LATITUDE), all= TRUE)
+#Adding dist_station_crash column with distance between accident location and climate observatory
+mergedFiles <- mergedFiles %>% 
+	mutate(dist_station_crash = distHaversine(cbind(station_long, station_lat), cbind(Long, Lat)))
+
+glimpse(mergedFiles)
 ```
-
-##Calculate the distance
-Finally, we can get the distance by using the crossed data table.
-
-``` {r distance_calculation, results='hide', message=FALSE, warning=FALSE}
-weather_crashes_dist <- 
-	weather_crashes %>% mutate(dist_station_crash = distHaversine(cbind(station_longitude, station_latitude), cbind(LONGITUDE, LATITUDE)))
-```
-
-##Our final data
-We will obtain:
-
-``` {r display_calculation }
-head(weather_crashes_dist, 10)
-```
-
 
 ## References
