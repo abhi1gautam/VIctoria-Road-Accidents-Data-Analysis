@@ -32,8 +32,6 @@ Fair weather favours mobility, while cold spells reduce it, and it seems natural
 Extreme weather conditions or other natural phenomena can make large parts of the road network impassable.
 
 
-_ARTICLES SUPPORTING EDUCATION STATS_
-
 ## Proposed Research Questions
 To further investigate the effect of external factors on Victorian road accidents, the following research questions are being proposed:   
 1. How, and to what extent, do different weather conditions affect road accidents?   
