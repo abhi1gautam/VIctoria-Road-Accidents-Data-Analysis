@@ -21,31 +21,31 @@ Towards zero is the 2016-2020 road safety strategy for the state of Victoria. Th
 
 The short term objective of the collaboration is to reduce annual road fatalities to below 200 by 2020 and reduce serious injuries, which require hospital admission, by 15% over the 5 year period between 2016-2020 (TAC, 2019).
 
-The Towards Zero campaign in centered upon the mantra of safer roads, safer speeds, safer vehicles and safer road users through improving infrastructure, focused education campaigns, increased monitoring and implementing innovations.
+The Towards Zero campaign is centered upon the mantra of safer roads, safer speeds, safer vehicles and safer road users through improving infrastructure, focused education campaigns, increased monitoring and implementing innovations.
 
 <center>
 ![_VicRoads 2019_](Graphics/VicRoads_People_Crash_Stats.PNG)
 </center>
 
 
-Since the implementation of the Towards Zero strategy, progress has been made to reduce both road fatalities and serious injuries (TAC, 2019). However, to ensure total deaths are below 200 by 2020, resourcing and policy needs to be implemented efficiently, which this investigation aims to inform.
+Since the implementation of the Towards Zero strategy, progress has been made to reduce both road fatalities and serious injuries (TAC, 2019). However, to ensure total deaths are below 200 by 2020, resourcing and policy need to be implemented efficiently, which this investigation aims to inform.
 
 ### Weather Conditions as a Factor of Road Safety
-Inclement weather conditions are widely regarded as a contributing factor to increased risk of road accidents. Conditions such as precipitation, high winds and temperatrue extremes may affect driver capabilities, traffic flow and  vehicle performance via traction, stability and manoeuvrability (Baguley 2001; Goodwin 2002).
+Inclement weather conditions are widely regarded as a contributing factor to increased risk of road accidents. Conditions such as precipitation, high winds and temperature extremes may affect driver capabilities, traffic flow and vehicle performance via traction, stability and manoeuvrability (Baguley 2001; Goodwin 2002).
 
-The relationship between weather and road accidents has been widely analysed in recent years with studies performed in multiple countries including Belgium, France, Denmark and Finland (Karlaftis & Yannis 2010).
+The relationship between weather and road accidents has been widely analysed in recent years with studies performed in multiple countries, including Belgium, France, Denmark and Finland (Karlaftis & Yannis 2010).
 
-To accomodate changes in weather, governing authorities have provided adverse condition warnings (Roadsafety.transport.nsw.gov.au, 2019) and implemented road laws such as variable speed limits to influence driver behavious.
+To accommodate changes in weather, governing authorities have provided adverse condition warnings (Roadsafety.transport.nsw.gov.au, 2019) and implemented road laws such as variable speed limits to influence driver behaviours.
 
 ## Proposed Research Questions
-To further investigate the reasons of high injury severity crashes and the effect of weather conditions on Victorian road accidents, the following research questions are being proposed:   
+To further investigate the reasons for high injury severity crashes and the effect of weather conditions on Victorian road accidents, the following research questions are being proposed:   
 1. What effect, if any, does weather has on the severity of road accidents?   
 2. Assuming wet conditions, how do driver age, vehicle quality and road condition impact accident severity?   
 3. How do seat belts and helmets impact on injury level?   
 4. What changes, if any, do our findings recommend to the Towards Zero campaign?   
 
 ## Data Sets
-Of the plethora of data sets investigated, a select few remain which satisfied the criteria of  a credible source, sufficient number of records, granularity at an individual level and relevant variables to address the proposed questions. The data sets identified are:
+Of the plethora of data sets investigated, a select few remain which satisfied the criteria of a credible source, sufficient number of records, granularity at an individual level and relevant variables to address the proposed questions. The data sets identified are:
 
 **Road Accident Dataset**
 
@@ -79,15 +79,15 @@ Whilst not currently included in our core data set, we are considering a local g
 Should our questions evolve or require such a layer, the annual observations will be merged with the core data set by matching on the year.
 
 ### Data Merging
-To address the research questions proposed, the data sets need to be merged on dimensions of time and location. With regards to time, both road crashes and weather datasets are documented on a day-basis and thus can be merged using the date variable. Merging on location is more difficult, as it will be necessary to calculate the distance between accidents and climate observatory stations, using latitude and longitude information, and then use the climate data from the closest observatory station in order to achieve a better quality in the analysis.
+To address the research questions proposed, the data sets need to be merged on dimensions of time and location. With regards to time, both road crashes and weather datasets are documented on a day-basis and thus can be merged using the date variable. Merging on location is more difficult, as it will be necessary to calculate the distance between accidents and climate observatory stations, using latitude and longitude information, and then use the climate data from the closest observatory station in order to achieve better quality in the analysis.
 
 ## Regression Modelling
-The foremost question in our investigation, question 1, asks assuming wet road conditions, how does the driver’s age, the vehicle’s quality and the road’s condition impact the severity of the accident. The road crash data set we’ve employed contains the following injury severity categorisation system, ordering injuries from most severe to least:
+The foremost question in our investigation, question 1, asks assuming wet road conditions, how do the driver’s age, the vehicle’s quality and the road’s condition impact the severity of the accident. The road crash data set we have employed contains the following injury severity categorisation system, ordering injuries from most severe to least:
 
 1.	Fatal accident
-2.	Serious injury accident (at least one in accident sent to hospital, possibly admitted)
+2.	Serious injury accident (at least one in accident sent to a hospital, possibly admitted)
 3.	Other injury accident
-4.	Non injury accident
+4.	Non-injury accident
 The Ordinal Logistic Regression Model can be used to predict the behaviour of an ordinal dependent variable given one or more independent variables. Therefore, we believe this will be an appropriate and hopefully fruitful model to structure the answer of this question around.
 
 We’re cognisant, however, that a number of potential complications could arise from using such a model. For instance, the assumption that errors are homoscedastic is often violated (Williams 2008). We will look to address this and any other violation that arises with our model in the investigation.
