@@ -1,10 +1,15 @@
 ---
-title: "Proposal: Victorian Road Accidents"
-author: "Bruno Quevedo, Priscilla Soenario, Priyanka Srinivasa, Abhisek Gautam, Sam Knowles, Ganesh Arunagiri"
+title: 'Proposal: Victorian Road Accidents'
+author: Bruno Quevedo, Priscilla Soenario, Priyanka Srinivasa, Abhisek Gautam, Sam
+  Knowles, Ganesh Arunagiri
 date: "01/09/2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
+<center>
 ![](Graphics/TowardsZero.jpg)
+</center>
 
 ## Background
 Towards zero is the 2016-2020 road safety strategy for the state of Victoria. The strategy is a collaboration between multiple Victorian government bodies including the Transport Accident Commission, VicRoads, Victorian Police, the Department of Justice and Regulation and the Department of Health and Human Services to achieve zero road deaths in Victoria.
@@ -13,7 +18,10 @@ The short term objective of the collaboration is to reduce annual road fatalitie
 
 The Towards Zero campaign in centered upon the mantra of safer roads, safer speeds, safer vehicles and safer road users through improving infrastructure, focused education campaigns, increased monitoring and implementing innovations.
 
+<center>
 ![_VicRoads 2019_](Graphics/VicRoads_People_Crash_Stats.PNG)
+</center>
+
 
 Since the implementation of the Towards Zero strategy, progress has been made to reduce both road fatalities and serious injuries. However, to ensure total deaths are below 200 by 2020, resourcing and policy needs to be implemented efficiently, which this investigation aims to inform.
 
@@ -22,48 +30,46 @@ Inclement weather conditions are widely regarded as a contributing factor to inc
 
 The relationship between weather and road accidents has been widely analysed in recent years with studies performed in multiple countries including Belgium, France, Denmark and Finland (Karlaftis & Yannis 2010).
 
-To accomodate changes in weather, governing authorities have provided adverse condition warnings (https://roadsafety.transport.nsw.gov.au/stayingsafe/drivers/badweather/index.html) and implemented road laws such as variable speed limits to infludnce driver behavious.
+To accomodate changes in weather, governing authorities have provided adverse condition warnings (https://roadsafety.transport.nsw.gov.au/stayingsafe/drivers/badweather/index.html) and implemented road laws such as variable speed limits to influence driver behavious.
 
 ## Proposed Research Questions
-To further investigate the effect of weather conditions on Victorian road accidents, the following research questions are being proposed:   
-1. How, and to what extent, do different weather conditions affect road accidents?   
-2. Given our findings in question 1, what is the probability of a road accident occuring during wet weather, given the age of the driver?   
-3. What changes, if any, do our findings recommend to the Towards Zero campaign?   
+To further investigate the reasons of high injury severity crashes and the effect of weather conditions on Victorian road accidents, the following research questions are being proposed:   
+1. What effect, if any, does weather has on the severity of road accidents?   
+2. Assuming wet conditions, how do driver age, vehicle quality and road condition impact accident severity?   
+3. How do seat belts and helmets impact on injury level?   
+4. What changes, if any, do our findings recommend to the Towards Zero campaign?   
 
 ## Data Sets
 Of the plethora of data sets investigated, a select few remain which satisfied the criteria of  a credible source, sufficient number of records, granularity at an individual level and relevant variables to address the proposed questions. The data sets identified are:
 
-**Road Accident Data**
+**Road Accident Dataset**
 
+<center>
 ![](Graphics/Crash_Data_Set.PNG)
 
-Provided by VicRoads, the state road and traffic authority, the road accident data set details 65 variables for over 180 thousand accidents occurring between 2006 and 2019 in Victoria, Australia.
 
-**Weather Data Set**
-
+Provided by VicRoads, the state road and traffic authority, the road accident data set details up to 130 variables for over 180 thousand accidents occurring between 2006 and 2019 in Victoria, Australia.
+</center>
+**Weather Datasets**
+<center>
 ![](Graphics/Weather_Data_Set.PNG)
 
 The weather data set is sourced from the Bureau of Meteorology, providing comprehensive daily statistics pertaining to weather conditions across stations in Victoria.
-
-**Population Data Set**
-
-![](Graphics/Population_Data_Set.PNG)
-
-Provided by the ABS, the population data set will provide a contextual layer to the findings.
-
+</center>
 ### Data Merging
-To address the research questions proposed, the data sets need to be merged on dimensions of time and location. With regards to time, the crash and weather sets are documented on a day-basis and thus were simple, whereas population is annual and required matching on the year. Merging on location was more difficult, with both weather and population collected only at centralised hubs, requiring the figures of the closest location to the crash site being applied.
+To address the research questions proposed, the data sets need to be merged on dimensions of time and location. With regards to time, both road crashes and weather datasets are documented on a day-basis and thus can be merged using the date variable. Merging on location is more difficult, as it will be necessary to calculate the distance between accidents and climate observatory stations, using latitude and longitude information, and then use the climate data from the closest observatory station in order to achieve a better quality in the analysis.
 
 ## Regression Modelling
-_Regression modelling techniques to be employed_
+The Ordinal Logistic Regression Model can be used to predict the behavior of an ordinal dependent variable given one or more independent variables. During this research, this model will be used in order to predict an accident severity level given the driver age, vehicle quality and road condition, answering the following research question "Assuming wet conditions, how do driver age, vehicle quality and road condition impact accident severity?". 
 
 
 ## Issues
 Throughout the project, the following have been identified as potential issues to consider and address:
+
 * Accurately assigning weather conditions to each road accident
 * Multicollinearity between weather conditions
 * Accounting for potentially missing explanatory variables
-* complexity of capturing and measuring weather variables
+* Complexity of capturing and measuring weather variables
 
 ## Appendix
 #### Reading Libraries
@@ -114,14 +120,13 @@ glimpse(mergedFiles)
 ```
 
 ## References
-https://www.sciencedirect.com/science/article/pii/S0001457513000948
+Bergel-Hayat, R., Debbarh, M., Antoniou, C. and Yannis, G. (2013). Explaining the road accident risk: Weather effects. Accident Analysis & Prevention, 60, pp.456-465.
 
-https://www.sciencedirect.com/science/article/pii/S0966692398000477	
+Al Hassan, Y. and Barker, D. (1999). The impact of unseasonable or extreme weather on traffic activity within Lothian region, Scotland. Journal of Transport Geography, 7(3), pp.209-213.
 
-https://ops.fhwa.dot.gov/weather/q1_roadimpact.htm
+Ops.fhwa.dot.gov. (2019). How Do Weather Events Impact Roads? - FHWA Road Weather Management. [online] Available at: https://ops.fhwa.dot.gov/weather/q1_roadimpact.htm [Accessed 1 Sep. 2019].
 
-https://pdfs.semanticscholar.org/2d8e/c35ac2bd46cc41934d84e1ee2024da6dbec1.pdf
+Baguley, C. (2019). The importance of a road accident data system and its utilisation.. [online] Pdfs.semanticscholar.org. Available at: https://pdfs.semanticscholar.org/2d8e/c35ac2bd46cc41934d84e1ee2024da6dbec1.pdf [Accessed 1 Sep. 2019].
 
-https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.587.9563&rep=rep1&type=pdf
-
+Goodwin, L. (2019). Weather Impacts on Arterial Traffic Flow. [online] Citeseerx.ist.psu.edu. Available at: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.587.9563&rep=rep1&type=pdf [Accessed 1 Sep. 2019].
 
