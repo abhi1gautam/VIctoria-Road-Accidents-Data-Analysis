@@ -1,3 +1,17 @@
+######################################################################
+##																																	##
+## Extract_weather_location- 																				##
+## This script checks the folder "Datasets/Climate" for all`				##
+## weather files and extracts latitude and longitude data from			##
+## each of these files and populates them to												##
+## Computed/climate_location_data.csv																##
+##																																	##
+##		Script Name: insert_station_info.r														##
+##		Created by: Abhisek																						##
+##																																	##
+##																																	##
+######################################################################
+
 library(stringr)
 file_list = list.files(path="Datasets/Climate/", pattern="*.csv")
 
