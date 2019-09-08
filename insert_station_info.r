@@ -1,3 +1,18 @@
+######################################################################
+## 																																	##
+## This script takes the file climate_location_data from						##
+## "Computed" folder and the accident_node data to compute					##
+## the distance between the weather station and the accident's			##
+## location and selects the station which has the least distance.		##
+## 																																	##
+##																																	##
+##		Script Name: insert_station_info.r														##
+##		Created by: Abhisek																						##
+##																																	##
+##																																	##
+######################################################################
+
+
 library(sqldf)
 library(geosphere)
 library(tidyverse)
