@@ -6,7 +6,7 @@
 ## each of these files and populates them to												##
 ## Computed/climate_location_data.csv																##
 ##																																	##
-##		Script Name: insert_station_info.r														##
+##		Script Name: extract_weather_location													##
 ##		Created by: Abhisek																						##
 ##																																	##
 ##																																	##
