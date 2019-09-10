@@ -16,47 +16,36 @@ vehicle <- read.csv("Datasets/Road Crashes/VEHICLE.csv")
 ##### TRANSFORM TO UPPERCASE ALL COLUMNS ----
 for (i in 1:length(colnames(accident))) {
 	colnames(accident)[i] = toupper(colnames(accident)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(accident_node))) {
 	colnames(accident_node)[i] = toupper(colnames(accident_node)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(accident_chainage))) {
 	colnames(accident_chainage)[i] = toupper(colnames(accident_chainage)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(accident_event))) {
 	colnames(accident_event)[i] = toupper(colnames(accident_event)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(accident_location))) {
 	colnames(accident_location)[i] = toupper(colnames(accident_location)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(atmospheric_cond))) {
 	colnames(atmospheric_cond)[i] = toupper(colnames(atmospheric_cond)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(node_id_complex_int_id))) {
 	colnames(node_id_complex_int_id)[i] = toupper(colnames(node_id_complex_int_id)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(person))) {
 	colnames(person)[i] = toupper(colnames(person)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(road_surface_cond))) {
 	colnames(road_surface_cond)[i] = toupper(colnames(road_surface_cond)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(subdca))) {
 	colnames(subdca)[i] = toupper(colnames(subdca)[i])
-	# return()     ... you don't need this
 }
 for (i in 1:length(colnames(vehicle))) {
 	colnames(vehicle)[i] = toupper(colnames(vehicle)[i])
-	# return()     ... you don't need this
 }
 
 accident_chainage <- accident_chainage %>% rename (NODE_ID = NODE.ID)
