@@ -62,6 +62,8 @@ mergedFiles <- merge(mergedFiles, road_surface_cond,by="ACCIDENT_NO")
 mergedFiles <- merge(mergedFiles, subdca,by="ACCIDENT_NO")
 mergedFiles <- merge(mergedFiles, vehicle, by="ACCIDENT_NO")
 
-
 #The “person_id” and the “vehicle_id” fields are also joining keys between the vehicle and person tables (eg for finding which person was in which vehicle in the accident).
 #For locational data the accident_no field is the critical joining key and then the ”node_id” field enables joining to the “accident_chainage” table
+
+#remove duplicate column names
+mergedFiles <- mergedFiles[,!duplicated(colnames(mergedFiles))]
