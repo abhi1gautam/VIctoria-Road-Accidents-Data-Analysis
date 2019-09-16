@@ -3,9 +3,11 @@ library(chron)
 library(RColorBrewer)
 library(lattice)
 
-# loop to read all rainfall datas from 2006 to 2019
+# loop to read all rainfall datas from 2006 to 2019. 
+# Rename your daily_rainfall.nc file to year.nc (i.e 2006.nc 2007.nc ...)
+# Make sure to set working directory to read above files (Session > Set Working Directory ...)
 for (i in 2006:2019) {
-	#Reading 2012_daily_rain.nc file
+	#Reading file
 	daily_rain <- i
 	ncfname <- paste(daily_rain, ".nc", sep = "")
 	dname <- "daily_rain"

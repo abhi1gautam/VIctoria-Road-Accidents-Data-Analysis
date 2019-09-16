@@ -52,15 +52,15 @@ accident_chainage <- accident_chainage %>% rename (NODE_ID = NODE.ID)
 mergedFiles <- accident
 #### Merging Data ----
 #Creating mergedFiles object, which contains all accidents CSV
-mergedFiles <- merge(accident,accident_event,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, accident_node,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, accident_location,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, atmospheric_cond,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, node_id_complex_int_id,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, person,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, road_surface_cond,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, subdca,by="ACCIDENT_NO")
-mergedFiles <- merge(mergedFiles, vehicle, by="ACCIDENT_NO")
+mergedFiles <- merge(accident,accident_event,by="ACCIDENT_NO", all.x = TRUE)
+mergedFiles <- merge(mergedFiles, accident_node,by="ACCIDENT_NO", all.x = TRUE)
+mergedFiles <- merge(mergedFiles, accident_location,by="ACCIDENT_NO",all.x = TRUE)
+mergedFiles <- merge(mergedFiles, atmospheric_cond,by="ACCIDENT_NO", all.x = TRUE)
+#mergedFiles <- merge(mergedFiles, node_id_complex_int_id,by="ACCIDENT_NO", all.x = TRUE)
+mergedFiles <- merge(mergedFiles, person,by="ACCIDENT_NO", all.x = TRUE)
+mergedFiles <- merge(mergedFiles, road_surface_cond,by="ACCIDENT_NO", all.x = TRUE)
+mergedFiles <- merge(mergedFiles, subdca,by="ACCIDENT_NO", all.x = TRUE)
+mergedFiles <- merge(mergedFiles, vehicle, by="ACCIDENT_NO", all.x = TRUE)
 
 #The “person_id” and the “vehicle_id” fields are also joining keys between the vehicle and person tables (eg for finding which person was in which vehicle in the accident).
 #For locational data the accident_no field is the critical joining key and then the ”node_id” field enables joining to the “accident_chainage” table
