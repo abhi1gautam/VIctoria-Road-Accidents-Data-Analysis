@@ -42,3 +42,5 @@ severity_year %>%
 total_accident %>%
 	group_by(YEAR) %>%
 	freq("SEVERITY")
+
+severity_by_year <- total_accident [, list(Count=.N), by=.(YEAR, SEVERITY)]
