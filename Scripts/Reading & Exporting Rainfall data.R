@@ -6,8 +6,9 @@ library(lattice)
 # loop to read all rainfall datas from 2006 to 2019. 
 # Rename your daily_rainfall.nc file to year.nc (i.e 2006.nc 2007.nc ...)
 # Make sure to set working directory to read above files (Session > Set Working Directory ...)
-for (i in 2006:2019) {
+#for (i in 2017:2018) {
 	#Reading file
+	i<- 2017
 	daily_rain <- i
 	ncfname <- paste(daily_rain, ".nc", sep = "")
 	dname <- "daily_rain"
@@ -109,8 +110,18 @@ for (i in 2006:2019) {
 	options(width = 110)
 	#	head(na.omit(daily_rain.df02, 20))
 	
-	# Export to CSV
-	#csvfile2 <- "cru_daily_rain_2.csv"
-	#write.table(na.omit(daily_rain.df02), csvfile2, row.names = FALSE, sep = ",")
-	
-}
+
+  names(daily_rain.df2017)[3:(max(t)+3)] <- format(seq(as.Date("2017/01/01"), by = "day", length.out = (max(t)+1)))
+
+  daily_rain.df2017 <- as.data.frame(daily_rain.df2017) %>%
+	tidyr::gather(key = DATE, value = Rainfall, -Var1, -Var2)
+  
+  daily_rain.df2017 <- daily_rain.df2017 %>% rename (Lat = Var2)
+  daily_rain.df2017 <- daily_rain.df2017 %>% rename (Long = Var1)
+
+  daily_rain.df2017$DATE  <- as.Date(daily_rain.df2017$DATE, "%Y-%m-%d")
+  
+  
+  # Export to CSV
+# csvfile2 <- "cru_daily_rain_2.csv"
+# write.table(na.omit(daily_rain.df2017), csvfile2, row.names = FALSE, sep = ",")
