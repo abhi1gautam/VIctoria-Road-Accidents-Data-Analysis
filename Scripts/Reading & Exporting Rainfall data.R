@@ -66,14 +66,14 @@ library(rgdal)
 	daily_rain.array[daily_rain.array == fillvalue$value] <- NA
 
 	# Getting a single time slice of the data (only one day), create an R data frame, and write a .csv file
-  m <- 1
-	daily_rain.slice2 <- daily_rain.df2018[, , m]
+  #m <- 1
+	#daily_rain.slice2 <- daily_rain.df2018[, , m]
 	
 	# Visualization
-	grid <- expand.grid(lon = lon, lat = lat)
-	cutpts <- c(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
-	levelplot(daily_rain.slice ~ lon * lat, data = grid, at = cutpts, cuts = 11, pretty = T, 
-						col.regions = (rev(brewer.pal(10, "RdBu"))))
+	#grid <- expand.grid(lon = lon, lat = lat)
+	#cutpts <- c(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
+	#levelplot(daily_rain.slice ~ lon * lat, data = grid, at = cutpts, cuts = 11, pretty = T, 
+	#					col.regions = (rev(brewer.pal(10, "RdBu"))))
 	
 	# Expand.grid() function is used to create pairs of values of longtiude and latitude
 	# As.vector() function is used to “unstack” the slice of data into a long vector,
@@ -127,5 +127,6 @@ library(rgdal)
   daily_rain.df2018$DATE  <- as.Date(daily_rain.df2018$DATE, "%Y-%m-%d")
   
   # Export to CSV
-# csvfile2 <- "cru_daily_rain_2.csv"
-# write.table(na.omit(daily_rain.df2018), csvfile2, row.names = FALSE, sep = ",")
+ csvfile2 <- "cru_daily_rain_2018.csv"
+ write.table(na.omit(daily_rain.df2018), csvfile2, row.names = FALSE, sep = ",")
+ 
