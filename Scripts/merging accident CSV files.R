@@ -13,7 +13,8 @@
 
 #Creating MergedFiltesFiltered for STDS assignment, with fewer columns.
 #Attention! When joining with accident_node and accident_location, some information may be lost as we are excluding duplicate rows!
-MergedFilesFiltered <- merge(person, accident,by="ACCIDENT_NO")
+MergedFilesFiltered <- merge(vehicle, accident_rain,by="ACCIDENT_NO")
+MergedFilesFiltered <- merge(accident, person,by="ACCIDENT_NO",all=FALSE)
 MergedFilesFiltered <- merge(MergedFilesFiltered, vehicle[ , c("ACCIDENT_NO","VEHICLE_ID","VEHICLE_YEAR_MANUF","VEHICLE_TYPE")], by=c("ACCIDENT_NO", "VEHICLE_ID"), all.x = TRUE)
 MergedFilesFiltered <- merge(MergedFilesFiltered, accident_location[, c("ACCIDENT_NO","ROAD_TYPE")],by="ACCIDENT_NO",all.x = TRUE)
 #MergedFilesFiltered <- merge(MergedFilesFiltered, atmospheric_cond,by="ACCIDENT_NO", all.x = TRUE)
@@ -21,11 +22,11 @@ MergedFilesFiltered <- merge(MergedFilesFiltered, accident_location[, c("ACCIDEN
 #MergedFilesFiltered <- merge(MergedFilesFiltered, road_surface_cond,by="ACCIDENT_NO", all.x = TRUE)
 #MergedFilesFiltered <- merge(MergedFilesFiltered, subdca,by="ACCIDENT_NO", all.x = TRUE)
 #MergedFilesFiltered <- merge(MergedFilesFiltered,accident_event[!duplicated(accident_event$ACCIDENT_NO), ],by="ACCIDENT_NO", all.x = TRUE)
-#MergedFilesFiltered <- merge(MergedFilesFiltered, accident_node [!duplicated(accident_node$ACCIDENT_NO), c("ACCIDENT_NO","LGA","LAT","LONG","LAT_RAIN","LONG_RAIN")],by="ACCIDENT_NO", all.x = TRUE)
+MergedFilesFiltered <- merge(accident, accident_node [!duplicated(accident_node$ACCIDENT_NO), c("ACCIDENT_NO","LGA","LAT","LONG","LAT_RAIN","LONG_RAIN")],by="ACCIDENT_NO", all.x = TRUE)
 MergedFilesFiltered <- merge(MergedFilesFiltered, population[ , c("YEAR","LGA","TOTAL_POPULATION","PERSONS/KM2")],by=c("YEAR","LGA"), all.x = TRUE)
 
-csvfileexport <- "Master Table.csv"
-write.table(MergedFilesFiltered, csvfileexport, row.names = FALSE, sep = ",")
+csvfileexport <- "Vehicle Data Cleaned"
+write.table(accident_veh, csvfileexport, row.names = FALSE, sep = ",")
 
 
 

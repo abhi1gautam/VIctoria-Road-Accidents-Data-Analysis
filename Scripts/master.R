@@ -19,7 +19,7 @@ source("Scripts/accidents.R")
 #Population data
 source("Scripts/population.R")
 #Rainfall data
-for (i in 2006:2019) {
+for (i in 2015:2015) {
 	source("Scripts/Reading & Exporting Rainfall data.R")
 }
 

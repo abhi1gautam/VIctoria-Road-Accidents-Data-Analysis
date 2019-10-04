@@ -137,8 +137,8 @@ assign(nam, daily_rain.dfVictoria)
 
 setwd("C:/Users/bruno/Documents/UTS/Statistical Thinking for Data Science/Group work/STDS-2019")
 # Export to CSV
-#csvfile2 <- "cru_daily_rain_2018.csv"
-#write.table(na.omit(daily_rain.df), csvfile2, row.names = FALSE, sep = ",")
+csvfile2 <- "daily_rain.dfVictoria2015"
+write.table(na.omit(daily_rain.dfVictoria2015), csvfile2, row.names = FALSE, sep = ",")
 
 
 # Remove unused objects

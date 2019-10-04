@@ -1,5 +1,6 @@
 ##### Reading files ----
-accident_rain <- read.csv("Datasets/Road Crashes/ACCIDENTS WITH RAINFALL.csv")
+accident_veh <- read.csv("Vehicle Data Cleaned.csv")
+accident_rain <- read.csv("Datasets/Road Crashes/Accident_LVL_Table.csv")
 accident <- read.csv("Datasets/Road Crashes/ACCIDENT.csv")
 accident_node <-  read.csv("Datasets/Road Crashes/NODE.CSV")
 accident_chainage <- read.csv("Datasets/Road Crashes/ACCIDENT_CHAINAGE.csv")
@@ -65,3 +66,43 @@ accident_node$LAT_RAIN <-  round(accident_node$LAT, 2)
 accident_node$LAT_RAIN <-  0.05*(round(accident_node$LAT_RAIN/0.05))
 accident_node$LONG_RAIN <-  round(accident_node$LONG, 2)
 accident_node$LONG_RAIN <-  0.05*(round(accident_node$LONG_RAIN/0.05))
+
+accident_rain <- accident_rain[!(accident_rain$RAINFALL == "-3276.7"),]
+merged2 <- merged
+merged2 <- merged2[!(merged2$SPEED_ZONE == "777"),]
+merged2 <- merged2[!(merged2$SPEED_ZONE == "888"),]
+merged2 <- merged2[!(merged2$SPEED_ZONE == "999"),]
+merged2 <- merged2[!(merged2$AGE.GROUP == "unknown"),]
+merged2 <- merged2[!(merged2$LIGHT.CONDITION.DESC == "Unknown"),]
+
+merged2 <- merged2[!(merged2$SEX == "U"),]
+
+
+levels(accident_veh$ROAD_TYPE) <- c(levels(accident_veh$ROAD_TYPE), "OTHER")
+accident_veh[accident_veh == "BOULEVARD"] <- "OTHER"
+accident_veh$ROAD_TYPE <- replace(accident_veh$ROAD_TYPE, accident_veh$ROAD_TYPE == "ACCESS","OTHER")
+
+
+v <- paste("case", c("ROAD", "STREET", "HIGHWAY", "FREEWAY","AVENUE","DRIVE"))
+accident_veh2	[!(accident_veh$ROAD_TYPE %in% v), ]
+
+setDT(accident_veh, key=ROAD_TYPE)[!(paste("case", c("ROAD", "STREET", "HIGHWAY", "FREEWAY","AVENUE","DRIVE"))), ROAD_TYPE := 'OTHER']
+accident_veh$ROAD_TYPE[grepl('^case\\s+(ROAD|STREET|HIGHWAY|FREEWAY|AVENUE|DRIVE)', accident_veh$ROAD_TYPE)] <- "OTHER"
+
+
+accident_veh$CAR_AGE_ACCIDENT <- as.factor(accident_veh$CAR_AGE_ACCIDENT)
+setDT(accident_veh)[VEHICLE_YEAR_MANUF  >= 2015, agegroup := "2015-2019"]
+setDT(accident_veh)[VEHICLE_YEAR_MANUF >= 2010 & VEHICLE_YEAR_MANUF <2015, agegroup := "2010 - 2014"]
+
+
+setDT(accident_veh)[VEHICLE_YEAR_MANUF >= 2000 & VEHICLE_YEAR_MANUF < 2010, agegroup := "2000-2009"]
+setDT(accident_veh)[VEHICLE_YEAR_MANUF < 2000, agegroup := "Before 2000"]
+setDT(accident_veh)[VEHICLE_YEAR_MANUF == 0 , agegroup := NA]
+
+accident_veh <- accident_veh %>% dplyr::rename (CAR_AGE = agegroup)
+
+setDT(accident_veh)[accident_veh$YEAR - accident_veh$VEHICLE_YEAR_MANUF <= 2, CAR_AGE_ACCIDENT := "2 YEARS OLD"]
+setDT(accident_veh)[accident_veh$YEAR - accident_veh$VEHICLE_YEAR_MANUF > 2 & accident_veh$YEAR - accident_veh$VEHICLE_YEAR_MANUF <= 5 , CAR_AGE_ACCIDENT := "3 to 5"]
+setDT(accident_veh)[accident_veh$YEAR - accident_veh$VEHICLE_YEAR_MANUF > 5 & accident_veh$YEAR - accident_veh$VEHICLE_YEAR_MANUF <= 10 , CAR_AGE_ACCIDENT := "6 to 10"]
+setDT(accident_veh)[accident_veh$YEAR - accident_veh$VEHICLE_YEAR_MANUF >10 , CAR_AGE_ACCIDENT := "MORE THAN 10"]
+setDT(accident_veh)[VEHICLE_YEAR_MANUF == 0 , CAR_AGE_ACCIDENT := NA]
