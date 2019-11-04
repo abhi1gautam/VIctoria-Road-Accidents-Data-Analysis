@@ -6,6 +6,7 @@ library(AMR)
 library(data.table)
 library(gganimate)
 library(reshape2)
+library(readxl)
 
 # Reading files ----
 accident <- read.csv("Datasets/Road Crashes/ACCIDENT.csv")
@@ -263,3 +264,16 @@ total_accident %>%
 severity_by_year <- total_accident [, list(Count=.N), by=.(YEAR, SEVERITY)]
 
 ?data.frame
+
+cyclists <- person %>% 
+	filter(Road.User.Type.Desc == "Bicyclists")
+
+cyclists_1<- left_join(cyclists,accident_node, by = "ACCIDENT_NO")
+cyclists_2<- cyclists_1 %>% 
+	
+
+ggplot()+
+	geom_point(data = cyclists_1, aes(x = Long, y = Lat), alpha = 0.5, size = 0.5)
+
+leaflet() %>% addTiles() %>%
+	addMarkers(data=cyclists_1, clusterOptions = markerClusterOptions())

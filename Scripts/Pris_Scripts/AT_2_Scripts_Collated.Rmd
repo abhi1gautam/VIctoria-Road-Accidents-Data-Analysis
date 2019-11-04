@@ -1,0 +1,502 @@
+---
+title: "Scripts for AT2"
+author: "Priscilla Soenario"
+date: "07/10/2019"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = 'C:/Users/pfspl/Documents/R/STDS/STDS-2019')
+```
+## Library's + Data sets imported
+```{r}
+library(plyr)
+library(rgdal)
+library(raster)
+library(readxl)
+library(tidyverse)
+library(tmap)
+library(viridis)
+
+
+#Accident data downloaded from VicRoads
+accident <- read.csv("Datasets/Road Crashes/ACCIDENT.csv")
+accident_node <-  read.csv("Datasets/Road Crashes/NODE.CSV")
+accident_chainage <- read.csv("Datasets/Road Crashes/ACCIDENT_CHAINAGE.csv")
+accident_event <- read.csv("Datasets/Road Crashes/ACCIDENT_EVENT.csv")
+accident_location <- read.csv("Datasets/Road Crashes/ACCIDENT_LOCATION.csv")
+atmospheric_cond <- read.csv("Datasets/Road Crashes/ATMOSPHERIC_COND.csv")
+node_id_complex_int_id <- read.csv("Datasets/Road Crashes/NODE_ID_COMPLEX_INT_ID.csv")
+person <- read.csv("Datasets/Road Crashes/PERSON.csv")
+road_surface_cond <- read.csv("Datasets/Road Crashes/ROAD_SURFACE_COND.csv")
+subdca <- read.csv("Datasets/Road Crashes/SUBDCA.csv")
+vehicle <- read.csv("Datasets/Road Crashes/VEHICLE.csv")
+
+#Rainfall and accident data combined - manipulated by Bruno
+rainfall_data <- read.csv("Datasets/Climate/Accidents2.csv")
+
+#Rainfall data by year - extracted initially by Bruno
+rain2018 <- read.csv("Datasets/Climate/daily_rain.dfVictoria2018.csv")
+rain2017 <- read.csv("Datasets/Climate/daily_rain.dfVictoria2017.csv")
+rain2016 <- read.csv("Datasets/Climate/daily_rain.dfVictoria2016.csv")
+rain2015 <- read.csv("Datasets/Climate/daily_rain.dfVictoria2015.csv")
+rain2014 <- read.csv("Datasets/Climate/daily_rain.dfVictoria2014.csv")
+rain2013 <- read.csv("Datasets/Climate/daily_rain.dfVictoria2013.csv")
+
+#Population dataset
+population <- read_xls("Datasets/Population/victoria_population_by_LGA_2011-18.xls" , skip = 8)
+
+#Maps
+vic_state_map <- readOGR(dsn = ("Datasets/Shapefiles/VIC_STATE_POLYGON/VIC_STATE_POLYGON_shp.shp"))
+vic_lga_map <- readOGR(dsn = ("Datasets/Shapefiles/VIC_LGA_POLYGON_shp/VIC_LOCALITY_POLYGON_shp.shp"))
+```
+
+```{r, eval=FALSE}
+TR_ROAD <- readOGR(dsn = ("Datasets/Shapefiles/SDM644761/ll_gda2020/shape/whole_of_dataset/vic/VMTRANS/TR_ROAD.shp"))
+```
+
+## Mapping Victoria
+Due to the size of the Roads shapefile, a smaller shapefile of the highways and freeways of Victoria was extracted.
+
+```{r, eval=FALSE}
+#only highwas and freeways in shapefile
+TR_HIGHWAY_FREEWAY <- TR_ROAD[TR_ROAD@data$ROAD_TYPE == "HIGHWAY" | TR_ROAD@data$ROAD_TYPE == "FREEWAY" ,]
+
+#extract the highways and freeways shapefile
+writeOGR(obj = TR_HIGHWAY_FREEWAY, dsn = "Datasets/Shapefiles", layer = "VIC_HIGHWAYS_FREEWAYS", driver = "ESRI Shapefile")
+```
+
+```{r}
+#Highways and freeways shapefile
+vic_highway <- readOGR(dsn = "Datasets/Shapefiles/VIC_HIGHWAYS_FREEWAYS.shp")
+
+
+#Only highways and freeways within the Victoria borders
+vic_highways_freeways <- raster::intersect(vic_highway,vic_state_map)
+
+#change polygon for reading into ggplot
+vic_state_df <- fortify(vic_state_map)
+vic_lga_map_df <- fortify(vic_lga_map)
+
+#Create ggplot map of Victoria
+ggplot()+
+	geom_polygon(data = vic_lga_map_df, aes(x=long, y=lat, group=group),colour = "light coral", fill = NA)+
+	geom_polygon(data = vic_state_df, aes(x=long,y=lat, group=group), colour = "black", fill = NA)+
+	geom_path(data = vic_highways_freeways, aes(x=long,y=lat, group = group), colour = "slate gray")+
+	theme_classic()+
+	coord_equal()+
+	labs(x = NULL,
+			 y = NULL)+
+	ggtitle("State of Victoria", subtitle = "LGA's and Major roads")+
+	theme(plot.title = element_text(hjust = 0.5),
+				plot.subtitle = element_text(hjust = 0.5))
+```
+
+### Map Accidents
+```{r}
+crash_locations <- left_join(accident, accident_node, by="ACCIDENT_NO" )
+crash_locations_1 <- crash_locations %>%
+  filter(SEVERITY == 1)
+
+ggplot()+
+	geom_polygon(data = vic_state_df, aes(x=long,y=lat, group=group), colour = "black", fill = "white")+
+	geom_point(data = crash_locations_1, aes(x = Long, y = Lat), colour = "deep pink",size = 0.5)+
+	theme_bw()+
+	ggtitle("Fatalities Across Victoria - 2006-19")
+
+```
+
+
+### Check Rainfall for each day to ensure average rainfall correct
+```{r}
+rain2013$YEAR<-2013
+rain2014$YEAR<-2014
+rain2015$YEAR<-2015
+rain2016$YEAR<-2016
+rain2017$YEAR<-2017
+rain2018$YEAR<-2018
+
+rain2013_18 <- rbind(rain2013,rain2014,rain2015, rain2016, rain2017, rain2018)
+
+rain_count <- ddply(rain2013_18, .(YEAR, LONG, LAT), summarise, count = length(RAINFALL))
+
+head(rain_count)
+tail(rain_count)
+```
+
+### Map Annual Average Rainfall and accidents
+```{r}
+#Average annual rainfall for each latitude and longitude
+rain_avg_2018 <- rain2018  %>%
+	group_by(LONG,LAT) %>%
+	dplyr::summarize(Mean = mean(RAINFALL))
+
+crash_locations <- left_join(accident, accident_node, by="ACCIDENT_NO" )
+crash_locations <- separate(crash_locations,"ACCIDENTDATE",c("DAY", "MONTH", "YEAR"), remove = FALSE)
+
+#2018 accidents
+accident_2018 <-  crash_locations %>% 
+	filter(YEAR == "2018")
+
+ggplot() + 
+	geom_raster(data = rain_avg_2018, aes(x=rain_avg_2018$LONG, y = rain_avg_2018$LAT, fill=Mean)) + 
+	scale_fill_viridis(direction = -1, name = "Avg. Rainfall (mm)") +
+	geom_polygon(data = vic_state_df, aes(x=long,y=lat, group=group), colour = "black", fill = NA)+
+	geom_point(data = accident_2018, aes(x = Long, y = Lat), colour = "red", alpha = 0.5, size = 0.5)+
+	geom_path(data = vic_highways_freeways, aes(x=long,y=lat, group = group), colour = "slate gray")+
+	theme_classic()+
+	coord_equal()+
+	ggtitle("Road Accidents and Average Rainfall - 2018")+
+	labs(x = NULL,
+			 y = NULL)+
+	theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Accidents by LGA
+```{r}
+accidents_by_LGA <- ddply(accident_node, .(Lga.Name.All), summarise, accident_count = length(ACCIDENT_NO))
+
+accident_by_LGA_1 <- accidents_by_LGA %>%
+	separate(Lga.Name.All,c("VIC_LGA__3","LGA_2"),sep = ",")
+glimpse(accident_by_LGA_1)
+
+#rename LGA's to summarise
+accident_by_LGA_1[1:2,"VIC_LGA__3"]<- "FALLS CREEK ALPINE RESORT (UNINC)"
+accident_by_LGA_1[3,"VIC_LGA__3"]<- "FRENCH-ELIZABETH-SANDSTONE ISLANDS (UNINC)"
+accident_by_LGA_1[4,"VIC_LGA__3"]<- "LAKE MOUNTAIN ALPINE RESORT (UNINC)"
+accident_by_LGA_1[5,"VIC_LGA__3"]<- "MOUNT BAW BAW ALPINE RESORT (UNINC)"
+accident_by_LGA_1[6,"VIC_LGA__3"]<- "MOUNT BULLER ALPINE RESORT (UNINC)"
+accident_by_LGA_1[7,"VIC_LGA__3"]<- "MOUNT HOTHAM ALPINE RESORT (UNINC)"
+accident_by_LGA_1[8,"VIC_LGA__3"]<- "MOUNT STIRLING ALPINE RESORT (UNINC)"
+accident_by_LGA_2 <- ddply(accident_by_LGA_1, .(VIC_LGA__3), summarise, accident_by_LGA = sum(accident_count))
+glimpse(accident_by_LGA_2)
+
+#join to shapefile
+vic_lga_map_1 <- vic_lga_map 
+vic_lga_map_1@data <-left_join(vic_lga_map_1@data,accident_by_LGA_2,by = "VIC_LGA__3")
+head(vic_lga_map_1)
+
+vic_lga_map_1@data[["accident_by_LGA"]][is.na(vic_lga_map_1@data[["accident_by_LGA"]])]<- 0
+
+#quick map
+qtm(vic_lga_map_1, fill = "accident_by_LGA")
+```
+
+### Fatalities and Severe Injuries by LGA
+```{r}
+death_by_LGA <- left_join(accident,accident_node,by = "ACCIDENT_NO")
+
+#Summarise
+death_by_LGA1 <- ddply(death_by_LGA, .(Lga.Name.All), summarise, death_count = sum(NO_PERSONS_KILLED), injury_2 = sum(NO_PERSONS_INJ_2))
+glimpse(death_by_LGA1)
+
+death_by_LGA2 <- death_by_LGA1 %>%
+	separate(Lga.Name.All,c("VIC_LGA__3","LGA_2"),sep = ",")
+
+#rename LGA's to summarise
+death_by_LGA2[1:2,"VIC_LGA__3"]<- "FALLS CREEK ALPINE RESORT (UNINC)"
+death_by_LGA2[3,"VIC_LGA__3"]<- "FRENCH-ELIZABETH-SANDSTONE ISLANDS (UNINC)"
+death_by_LGA2[4,"VIC_LGA__3"]<- "LAKE MOUNTAIN ALPINE RESORT (UNINC)"
+death_by_LGA2[5,"VIC_LGA__3"]<- "MOUNT BAW BAW ALPINE RESORT (UNINC)"
+death_by_LGA2[6,"VIC_LGA__3"]<- "MOUNT BULLER ALPINE RESORT (UNINC)"
+death_by_LGA2[7,"VIC_LGA__3"]<- "MOUNT HOTHAM ALPINE RESORT (UNINC)"
+death_by_LGA2[8,"VIC_LGA__3"]<- "MOUNT STIRLING ALPINE RESORT (UNINC)"
+
+death_by_LGA_3 <- ddply(death_by_LGA2, .(VIC_LGA__3), summarise, death_LGA = sum(death_count), inj_2 = sum(injury_2))
+glimpse(death_by_LGA_3)
+
+vic_lga_map2 <- vic_lga_map
+VIC_LGA_df <- as.data.frame(vic_lga_map)
+
+#Test join with dataframes
+VIC_LGA_df2 <- left_join(VIC_LGA_df,death_by_LGA_3,by= "VIC_LGA__3")
+VIC_LGA_df2[c("death_LGA","inj_2")][is.na(VIC_LGA_df2[c("death_LGA","inj_2")])]<- 0
+glimpse(VIC_LGA_df2)
+
+#Join to shapefile
+vic_lga_map2@data <-left_join(vic_lga_map2@data,death_by_LGA_3,by = "VIC_LGA__3")
+
+vic_lga_map2@data[["death_LGA"]][is.na(vic_lga_map@data[["death_LGA"]])]<- 0
+vic_lga_map2@data[["inj_2"]][is.na(vic_lga_map@data[["inj_2"]])]<- 0
+
+#quick map
+qtm(vic_lga_map2, fill = "death_LGA")
+
+qtm(vic_lga_map2, fill = "inj_2")
+```
+
+### Accidents by year
+```{r}
+#Separate day, month and year
+accident_sep <- separate(accident,"ACCIDENTDATE",c("DAY", "MONTH", "YEAR"), remove = FALSE)
+
+#merge to get LGA and accident
+person_by_LGA <- left_join(person,accident_node,by = "ACCIDENT_NO")
+person_by_LGA <- left_join(person_by_LGA,accident_sep,by = "ACCIDENT_NO")
+
+#summarise accidents by LGA
+summary_by_LGA <- ddply(person_by_LGA, .(Lga.Name.All,YEAR, SEX, Road.User.Type.Desc,Inj.Level.Desc), summarise, count = length(ACCIDENT_NO))
+glimpse(summary_by_LGA)
+
+summary_by_LGA2 <- summary_by_LGA %>%
+	separate(Lga.Name.All,c("VIC_LGA__3","LGA_2"),sep = ",")
+
+#rename LGA's to summarise
+summary_by_LGA2[1:49,"VIC_LGA__3"]<- "FALLS CREEK ALPINE RESORT (UNINC)"
+summary_by_LGA2[50:55,"VIC_LGA__3"]<- "FRENCH-ELIZABETH-SANDSTONE ISLANDS (UNINC)"
+summary_by_LGA2[56:79,"VIC_LGA__3"]<- "LAKE MOUNTAIN ALPINE RESORT (UNINC)"
+summary_by_LGA2[80:100,"VIC_LGA__3"]<- "MOUNT BAW BAW ALPINE RESORT (UNINC)"
+summary_by_LGA2[101:141,"VIC_LGA__3"]<- "MOUNT BULLER ALPINE RESORT (UNINC)"
+summary_by_LGA2[142:213,"VIC_LGA__3"]<- "MOUNT HOTHAM ALPINE RESORT (UNINC)"
+summary_by_LGA2[214:217,"VIC_LGA__3"]<- "MOUNT STIRLING ALPINE RESORT (UNINC)"
+
+summary_by_LGA2 <- summary_by_LGA2 %>% select(-"LGA_2")
+
+summary_by_LGA3 <- ddply(summary_by_LGA2, .(VIC_LGA__3,YEAR,Inj.Level.Desc), summarise, count_LGA = sum(count))
+glimpse(summary_by_LGA3)
+
+#2018 subset
+fatal_2018 <- summary_by_LGA3 %>%
+	filter(YEAR==2018)
+
+fatal_2018_map <- vic_lga_map
+
+fatal_2018 <- fatal_2018 %>%
+	spread(key = "Inj.Level.Desc", value = "count_LGA")
+fatal_2018_map@data <- left_join(fatal_2018_map@data,fatal_2018,by = "VIC_LGA__3")
+
+#map by fatalities and year
+tmap_mode ("plot")
+tm_shape(fatal_2018_map)+
+	tm_polygons(c("Fatality","Serious injury","Other injury"))+
+	tm_layout(main.title = "2018 Accidents - Injury Severity")+
+	tm_legend(legend.position = c("right","top"))
+```
+
+## Driver Fatility by sex and age
+```{r}
+person_1 <- person %>%
+	filter(!(Age.Group %in% "unknown")) %>%
+	filter(INJ_LEVEL == 1|INJ_LEVEL == 2) %>% 
+	filter(Road.User.Type.Desc == "Drivers") %>% 
+	filter(Age.Group != "5-12") %>% 
+	filter(SEX != "U")
+
+ggplot(person_1) +
+	aes(x = Age.Group, fill = SEX) +
+	geom_bar() +
+	theme_classic()+
+	ggtitle("Driver Fatalities by Age Group and Gender")+
+	theme(plot.title = element_text(hjust = 0.5))+
+	facet_wrap(~SEX)
+```
+
+## Light Condition Heat tiles
+```{r}
+accident_1 <- accident
+
+#Rename light conditions
+accident_1$LIGHT_CONDITION [accident_1$LIGHT_CONDITION == "1"] <- "Day" 
+accident_1$LIGHT_CONDITION [accident_1$LIGHT_CONDITION == "2"] <- "Dusk/Dawn" 
+accident_1$LIGHT_CONDITION [accident_1$LIGHT_CONDITION == "3"] <- "Night" 
+accident_1$LIGHT_CONDITION [accident_1$LIGHT_CONDITION == "4"] <- "Night" 
+accident_1$LIGHT_CONDITION [accident_1$LIGHT_CONDITION == "5"] <- "Night" 
+accident_1$LIGHT_CONDITION [accident_1$LIGHT_CONDITION == "6"] <- "Night" 
+
+accident_1$SEVERITY<- as.factor(accident_1$SEVERITY)
+
+#Light severity for the person's injured
+accident_2 <- left_join(person,accident_1, by = "ACCIDENT_NO")
+
+#Summarise the injuries in each light condition
+accident_3 <- ddply(accident_2, .(LIGHT_CONDITION,Road.User.Type.Desc, INJ_LEVEL), summarise, No_People = length(ACCIDENT_NO))
+
+#Summarise injury levels for each road user
+accident_4 <- ddply(accident_2, .(Road.User.Type.Desc, INJ_LEVEL), summarise, No_Population = length(ACCIDENT_NO))
+
+#Join the 
+accident_5<- left_join(accident_3,accident_4, by = c("Road.User.Type.Desc","INJ_LEVEL"))
+
+#create proportions to create the tiles
+accident_5$portion <- accident_5$No_People/accident_5$No_Population*100
+
+#Remove non-injury accidents, unknown light conditions and unknown road users
+accident_6 <- accident_5 %>%
+	filter(!(LIGHT_CONDITION %in% "9")) %>%
+	filter(!(Road.User.Type.Desc %in% 
+					 	"Unknown")) %>%
+	filter(INJ_LEVEL >= 1 & INJ_LEVEL <= 3.02)
+
+#Rename fatality levels
+accident_6$INJ_LEVEL [accident_6$INJ_LEVEL == "1"] <- "Fatality"
+accident_6$INJ_LEVEL [accident_6$INJ_LEVEL == "2"] <- "Serious Injury"
+accident_6$INJ_LEVEL [accident_6$INJ_LEVEL == "3"] <- "Minor Injury"
+
+#create heat tiles
+ggplot(accident_6) +
+	aes(x = LIGHT_CONDITION, y = Road.User.Type.Desc, fill = portion) +
+	geom_tile(size = 1L) +
+	scale_fill_distiller(palette = "RdYlGn") +
+	labs(x = "Light Condition", y = "Road User", title = "Proportion of Road User Injury Severity in Different Light Conditions", fill = "Proportion of Road User by Severity") +
+	theme_classic() +
+	theme(legend.position = "bottom") +
+	facet_wrap(vars(INJ_LEVEL))+
+	theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Population Density
+```{r}
+#Cleaning Population data
+#START BRUNO's CODE
+population <- population[,c(1,2,3,69,78)]
+colnames(population)[colnames(population)=="no....69"] <- "TOTAL_POPULATION"
+colnames(population)[colnames(population)=="LABEL"] <- "LGA"
+colnames(accident)[colnames(accident)=="LGA_NAME"] <- "LGA"
+for (i in 1:length(colnames(population))) {
+	colnames(population)[i] = toupper(colnames(population)[i])
+}
+
+
+population[population=="Greater Dandenong (C)"] <- "DANDENONG"
+population[population=="Casey (C)"] <- "CASEY"
+population[population=="Mornington Peninsula (S)"] <- "MORNINGTON PENINSULA"
+population[population=="Greater Dandenong (C)"] <- "DANDENONG"
+population[population=="Baw Baw (S)"] <- "BAW BAW"
+population[population=="Frankston (C)"] <- "FRANKSTON"
+population[population=="Wyndham (C)"] <- "WYNDHAM"
+population[population=="East Gippsland (S)"] <- "EAST GIPPSLAND"
+population[population=="Latrobe (C) (Vic.)"] <- "LATROBE"
+population[population=="Bass Coast (S)"] <- "BASS COAST"
+population[population=="Greater Geelong (C)"] <- "GEELONG"
+population[population=="Stonnington (C)"] <- "STONNINGTON"
+population[population=="Gannawarra (S)"] <- "GANNAWARRA"
+population[population=="Cardinia (S)"] <- "CARDINIA"
+population[population=="Glen Eira (C)"] <- "GLEN EIRA"
+population[population=="South Gippsland (S)"] <- "SOUTH GIPPSLAND"
+population[population=="Manningham (C)"] <- "MANNINGHAM"
+population[population=="Moreland (C)"] <- "MORELAND"
+population[population=="Wellington (S)"] <- "WELLINGTON"
+population[population=="Buloke (S)"] <- "BULOKE"
+population[population=="Melton (C)"] <- "MELTON"
+population[population=="Hobsons Bay (C)"] <- "HOBSONS BAY"
+population[population=="Melbourne (C)"] <- "MELBOURNE"
+population[population=="Strathbogie (S)"] <- "STRATHBOGIE"
+population[population=="Maribyrnong (C)"] <- "MARIBYRNONG"
+population[population=="Macedon Ranges (S)"] <- "MACEDON RANGES"
+population[population=="Brimbank (C)"] <- "BRIMBANK"
+population[population=="Surf Coast (S)"] <- "SURF COAST"
+population[population=="Nillumbik (S)"] <- "NILLUMBIK"
+population[population=="Ballarat (C)"] <- "BALLARAT"
+population[population=="Yarra (C)"] <- "YARRA"
+population[population=="Port Phillip (C)"] <- "PORT PHILLIP"
+population[population=="Golden Plains (S)"] <- "GOLDEN PLAINS"
+population[population=="Moira (S)"] <- "MOIRA"
+population[population=="Mitchell (S)"] <- "MITCHELL"
+population[population=="Yarra Ranges (S)"] <- "YARRA RANGES"
+population[population=="Greater Hume Shire (A)"] <- "HUME"
+population[population=="Bayside (A)"] <- "BAYSIDE"
+population[population=="Central Goldfields (S)"] <- "CENTRAL GOLDFIELDS"
+population[population=="Greater Shepparton (C)"] <- "SHEPPARTON"
+population[population=="Monash (C)"] <- "MONASH"
+population[population=="Kingston (C) (Vic.)"] <- "KINGSTON"
+population[population=="Moonee Valley (C)"] <- "MOONEE VALLEY"
+population[population=="Greater Bendigo (C)"] <- "BENDIGO"
+population[population=="Murrindindi (S)"] <- "MURRINDINDI"
+population[population=="Horsham (RC)"] <- "HORSHAM"
+population[population=="Southern Grampians (S)"] <- "SOUTHERN GRAMPIANS"
+population[population=="Banyule (C)"] <- "BANYULE"
+population[population=="Knox (C)"] <- "KNOX"
+population[population=="Moorabool (S)"] <- "MOORABOOL"
+population[population=="Whitehorse (C)"] <- "WHITEHORSE"
+population[population=="Hindmarsh (S)"] <- "HINDMARSH"
+population[population=="Boroondara (C)"] <- "BOROONDARA"
+population[population=="Darebin (C)"] <- "DAREBIN"
+population[population=="Moyne (S)"] <- "MOYNE"
+population[population=="Ararat (RC)"] <- "ARARAT"
+population[population=="Whittlesea (C)"] <- "WHITTLESEA"
+population[population=="Maroondah (C)"] <- "MAROONDAH"
+population[population=="Hepburn (S)"] <- "HEPBURN"
+population[population=="Warrnambool (C)"] <- "WARRNAMBOOL"
+population[population=="Mount Alexander (S)"] <- "MOUNT ALEXANDER"
+population[population=="Swan Hill (RC)"] <- "SWAN HILL"
+population[population=="Indigo (S)"] <- "INDIGO"
+population[population=="Wangaratta (RC)"] <- "WANGARATTA"
+population[population=="Mansfield (S)"] <- "MANSFIELD"
+population[population=="Pyrenees (S)"] <- "PYRENEES"
+population[population=="Benalla (RC)"] <- "BENALLA"
+population[population=="Mildura (RC)"] <- "MILDURA"
+population[population=="Campaspe (S)"] <- "CAMPASPE"
+population[population=="Towong (S)"] <- "TOWONG"
+population[population=="Loddon (S)"] <- "LODDON"
+population[population=="West Wimmera (S)"] <- "WEST WIMMERA"
+population[population=="Corangamite (S)"] <- "CORANGAMITE"
+population[population=="Northern Grampians (S)"] <- "NORTHERN GRAMPIANS"
+population[population=="Alpine (S)"] <- "ALPINE"
+population[population=="Glenelg (S)"] <- "GLENELG"
+population[population=="Yarriambiack (S)"] <- "YARRIAMBIACK"
+population[population=="Wodonga (C)"] <- "WODONGA"
+population[population=="Queenscliffe (B)"] <- "QUEENSCLIFFE"
+population[population=="Colac-Otway (S)"] <- "COLAC OTWAY"
+#END BRUNO's CODE
+
+population_1 <- population %>% 
+	dplyr::select(-TOTAL_POPULATION) %>% 
+	filter(YEAR != "NA") %>% 
+	filter(YEAR != "2011")
+
+population_1$`PERSONS/KM2`<- as.numeric(population_1$`PERSONS/KM2`)
+
+population_1<- population_1 %>% 
+	spread(key = "YEAR",value = "PERSONS/KM2")
+
+LGA_map_1 <- vic_lga_map
+LGA_map_1@data<- left_join(LGA_map_1@data, population_1, by = c("VIC_LGA__3"="LGA"))
+
+LGA_map_1@data[["2013"]][is.na(LGA_map_1@data[["2013"]])]<- 0
+LGA_map_1@data[["2014"]][is.na(LGA_map_1@data[["2014"]])]<- 0
+LGA_map_1@data[["2015"]][is.na(LGA_map_1@data[["2015"]])]<- 0
+LGA_map_1@data[["2016"]][is.na(LGA_map_1@data[["2016"]])]<- 0
+LGA_map_1@data[["2017"]][is.na(LGA_map_1@data[["2017"]])]<- 0
+LGA_map_1@data[["2018"]][is.na(LGA_map_1@data[["2018"]])]<- 0
+
+tm_shape(LGA_map_1)+
+	tm_polygons("2018",
+							title = "Population Density")+
+	tm_layout(main.title = "LGA Population Density 2018")
+```
+
+```{r}
+road_type <- left_join(accident,accident_location,by = "ACCIDENT_NO")
+road_type <- left_join(road_type,accident_node, by = "ACCIDENT_NO")
+glimpse(road_type)
+
+#filter only for highways and freeways
+road_route1 <- road_type %>%
+	filter(ROAD_ROUTE_1 >2000) %>% 
+	filter(ROAD_ROUTE_1<3000)
+
+road_route2 <- ddply(road_route1, .(Lga.Name.All), summarise, count = length(ACCIDENT_NO))
+glimpse(road_route2)
+
+road_route3 <- road_route2 %>%
+	separate(Lga.Name.All,c("VIC_LGA__3","LGA_2"),sep = ",")
+
+road_route4 <- road_route3 %>%
+	select(-LGA_2)
+glimpse(road_route4)
+
+road_route5 <- ddply(road_route4, .(VIC_LGA__3), summarise, count = sum(count))
+glimpse(road_route5)
+
+road_route_map <- vic_lga_map
+
+road_route_map@data <- left_join(road_route_map@data,road_route5,by = "VIC_LGA__3")
+
+tmap_mode ("plot")
+tm_shape(road_route_map)+
+	tm_polygons("count")+
+	tm_layout(main.title = "Accident Highways and Freeways")+
+	tm_legend(legend.position = c("right","top"))
+```

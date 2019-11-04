@@ -32,7 +32,7 @@ tog_1 %>%
 	geom_point(colour = "red")
 
 #read in shapefile + create data frame from shapefile
-vic_state_map <- readOGR(dsn = ("VIC_STATE_POLYGON/VIC_STATE_POLYGON_shp.shp"))
+vic_state_map <- readOGR(dsn = ("Datasets/Shapefiles/VIC_STATE_POLYGON/VIC_STATE_POLYGON_shp.shp"))
 vic_state_df <- fortify(vic_state_map)
 
 #plot polygon and points

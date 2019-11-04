@@ -49,26 +49,31 @@ ggplot()+
 	geom_path(data = rd_3, aes(x=long,y=lat, group = group), colour = "black", size = 0.1)
 
 
-#TR_ROADS--------
-#C:\Users\pfspl\Documents\R\STDS\STDS-2019\Datasets\Shapefiles\SDM644761\ll_gda2020\shape\whole_of_dataset\vic\VMTRANS
+#TR_ROADS - USE THIS ONE--------
+#C:\Users\pfspl\Documents\R\STDS\group\Datasets\Shapefiles\SDM644761\ll_gda2020\shape\whole_of_dataset\vic\VMTRANS
 
 TR_ROAD <- readOGR(dsn = ("Datasets/Shapefiles/SDM644761/ll_gda2020/shape/whole_of_dataset/vic/VMTRANS/TR_ROAD.shp"))
 TR_ROAD_DF <- as.data.frame(TR_ROAD)
-roads <- TR_ROAD_DF %>% 
-	filter(FTYPE_CODE == "road")
-highways <- roads %>% 
+
+highways <- TR_ROAD_DF %>% 
 	filter(ROAD_TYPE == "HIGHWAY")
 
+highways_freeways <- TR_ROAD_DF %>% 
+	filter(ROAD_TYPE == "HIGHWAY" | ROAD_TYPE == "FREEWAY")
+
 TR_HIGHWAYS <- TR_ROAD[TR_ROAD@data$ROAD_TYPE == "HIGHWAY" ,]
-TR_HIGHWAYS_1
+TR_HIGHWAY_FREEWAY <- TR_ROAD[TR_ROAD@data$ROAD_TYPE == "HIGHWAY" | TR_ROAD@data$ROAD_TYPE == "FREEWAY" ,]
 
 ggplot()+
-	geom_path(data = TR_HIGHWAYS, aes(x=long,y=lat, group = group), colour = "black")
+	geom_path(data = TR_HIGHWAYS1, aes(x=long,y=lat, group = group), colour = "black")
 
 #VICTORIA SHAPEFILE-----
 vic_state_map <- readOGR(dsn = ("Datasets/Shapefiles/VIC_STATE_POLYGON/VIC_STATE_POLYGON_shp.shp"))
 vic_state_df <- fortify(vic_state_map)
 
+#Only intersecting lines-------
+vic_highways <- intersect(TR_HIGHWAYS,vic_state_map)
+vic_highways_freeways <- intersect(TR_HIGHWAY_FREEWAY,vic_state_map)
 
 #FATALITIES-----
 crash <- read_csv("Datasets/Road Crashes/ACCIDENT.csv")
@@ -76,32 +81,50 @@ NODE <- read_csv("Datasets/Road Crashes/NODE.csv")
 
 factor(crash$SEVERITY)
 
-crash$SEVERITY[crash$SEVERITY==1] <- "Fatal Accident"
-test$SEVERITY[test$SEVERITY==2] <- "Serious Injury Accident"
-test$SEVERITY[test$SEVERITY==3] <- "Minor Injury Accident"
-test$SEVERITY[test$SEVERITY==4] <- "No Injury"
-
 fatal <- merge(NODE , crash ,by="ACCIDENT_NO" )
 fatal_1 <- fatal %>% 
 	filter(SEVERITY == 1)
+fatal_1 <- separate(fatal_1,"ACCIDENTDATE",c("DAY", "MONTH", "YEAR"), remove = FALSE)
+
+serious <- fatal %>% 
+	filter(SEVERITY == 2)
+serious <- separate(serious,"ACCIDENTDATE",c("DAY", "MONTH", "YEAR"), remove = FALSE)
 
 #MAP ALL LAYERS------
 ggplot()+
 	geom_polygon(data = vic_state_df, aes(x=long,y=lat, group=group), colour = "black", fill = "white")+
-	geom_point(data = fatal_1, aes(x = Long, y = Lat), colour = "deep pink",size = 0.5)+
-	geom_path(data = TR_HIGHWAYS, aes(x=long,y=lat, group = group), colour = "grey")+
-	ggtitle("Fatalities Across Victoria - 2006-19")
-
-###fatalities by year
-fatal_2 <- separate(fatal_1,"ACCIDENTDATE",c("DAY", "MONTH", "YEAR"), remove = FALSE)
-
-tmap_mode ("plot")
-
-glimpse(metro)
-
-tm_shape (vic_state_map)+ tm_polygons()+
-	tm_shape(TR_HIGHWAYS) + tm_lines()+
-	tm_shape(fatal_2) + tm_dots(size = "SEVERITY")
-
-tm_shape(fatal_2) + tm_dots(size = "SEVERITY")
+	geom_point(data = fatal_1, aes(x = Long, y = Lat), colour = "red",size = 0.5, alpha = 0.5)+
+	geom_path(data = vic_highways_freeways, aes(x=long,y=lat, group = group), colour = "grey")+
+	theme_classic()+
+	coord_equal()+
+	ggtitle("Road Fatalities Across Victoria - 2006-19")+
+	theme(plot.title = element_text(hjust = 0.5))+
+	labs(x = NULL,
+			 y = NULL)
 	
+
+#Fatalities
+ggplot()+
+	geom_polygon(data = vic_state_df, aes(x=long,y=lat, group=group), colour = "black", fill = "white")+
+	geom_point(data = fatal_1, aes(x = Long, y = Lat),colour = "deep pink", show.legend = TRUE, size = 0.5)+
+	geom_path(data = vic_highways_freeways, aes(x=long,y=lat, group = group), show.legend = TRUE, colour = "slate gray")+
+	theme_classic()+
+	ggtitle("Fatalities Across Victoria - 2006-19")+
+	coord_equal()+
+	labs(x = NULL,
+			 y = NULL)
+
+#Serious Injuries
+ggplot()+
+	geom_polygon(data = vic_state_df, aes(x=long,y=lat, group=group), colour = "black", fill = "white")+
+	geom_point(data = serious, aes(x = Long, y = Lat), colour = "light sky blue",size = 0.5, alpha = 0.5)+
+	geom_path(data = vic_highways_freeways, aes(x=long,y=lat, group = group), colour = "slate gray")+
+	theme_classic()+
+	ggtitle("Serious Injuries Across Victoria - 2006-19")+
+	coord_equal()+
+	theme(plot.title = element_text(hjust = 0.5))+
+	labs(x = NULL,
+			 y = NULL)
+
+#Extract Highways and Freeways as a shapefile
+writeOGR(obj = TR_HIGHWAY_FREEWAY, dsn = "Datasets/Shapefiles", layer = "VIC_HIGHWAYS_FREEWAYS", driver = "ESRI Shapefile")
